@@ -26,6 +26,7 @@ March, 2015
   int getNumFilesInRoot(FILE* file);
   int getNumFatCopies(FILE* file);
   int getNumSectorsPerFat(FILE* file);
+  char* trimWhitespace(char* string); //Note: still must free original string (else memory leak!)
 
 
 //End include guard

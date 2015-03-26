@@ -76,6 +76,11 @@ void ListFilesInRoot(FILE* file)
         memset(filename, '\0', MAX_BUFFER_SIZE);
         fread(filename, 1, DIR_FILENAME_SIZE, file);
 
+        //Read in the filename
+        fseek(file, cur + DIR_EXTENSION_POS, SEEK_SET);
+        char* extension = malloc(MAX_BUFFER_SIZE);
+        memset(extension, '\0', MAX_BUFFER_SIZE);
+        fread(extension, 1, DIR_EXTENSION_SIZE, file);
 
         //Read in creation date (little endian - turn it into a big endian int)
         fseek(file, cur + DIR_CREATION_DATE_POS, SEEK_SET);
@@ -94,7 +99,8 @@ void ListFilesInRoot(FILE* file)
         int createTime = (byte1 << 0) + (byte2 << 8);
 
         //Print what we know!
-        printf("%c %10d %20s %10d %10d\n", type, size, filename, createDate, createTime);
+        char* trimFName = trimWhitespace(filename);
+        printf("%c %10d %20s.%3s %10d %10d\n", type, size, trimFName, extension, createDate, createTime);
 
         //Clean up memory
         free(filename);

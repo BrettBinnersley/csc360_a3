@@ -9,6 +9,7 @@ March, 2015
 */
 
 #include "shared.h"
+#include <ctype.h>
 
 void getOSName(FILE* file, char* osname)
 {
@@ -124,7 +125,34 @@ int getNumSectorsPerFat(FILE* file)
   return numSects;
 }
 
+char* trimWhitespace(char* string)
+{
+  char* endChar;
 
+  // Trim leading space
+  while(isspace(*string))
+  {
+    ++string;
+  }
+
+  //If everything was a space.
+  if(*string == 0)
+  {
+    return string;
+  }
+
+  // Trim trailing space
+  endChar = string + strlen(string) - 1;
+  while(endChar > string && isspace(*endChar))
+  {
+    --endChar;
+  }
+
+  // Write new null terminator
+  *(endChar + 1) = 0;
+
+  return string;
+}
 
 
 //EOF
