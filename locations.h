@@ -1,5 +1,5 @@
 /*
-Brett Binnersley, V0076751
+Brett Binnersley, V00776751
 Csc 360, Assignment #3
 
 Locations - defines values from the FAT-12 documentation about a filesystem.
@@ -40,6 +40,8 @@ March, 2015
   #define FAT_BAD_CLUSTER 0xFF7
   #define FAT_LAST_CLUSTER_START 0xFF8
   #define FAT_LAST_CLUSTER_END 0xFFF
+  #define FAT_FIRST_POS 512
+  #define FAT_RESERVED_CNT 2
   //Note: Anything else is the number of the next cluster in the file
 
 
@@ -50,6 +52,9 @@ March, 2015
   #define DIR_VOLUME_LABEL 0x08
   #define DIR_SUBDIRECTORY 0x10
   #define DIR_ARCHIVE 0x20
+  #define DIR_EMPTY 0xE5
+  #define DIR_FREE 0x00
+  #define DIR_OFFSET_SIZE 32
 
   //Directory properties
   #define DIR_FILENAME_POS 0
@@ -65,7 +70,11 @@ March, 2015
   #define DIR_FILE_SIZE_POS 28
   #define DIR_FILE_SIZE_SIZE 4
 
+  //# of sectors inside a cluster (always 1 in FAT-12)
+  #define SECTORS_PER_CLUSTER 1
+
 
 //End include guard
 #endif
+
 //EOF
