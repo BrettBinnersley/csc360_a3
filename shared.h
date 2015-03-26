@@ -3,6 +3,8 @@ Brett Binnersley, V00776751
 Csc 360, Assignment #3
 
 Functions that are shared between multiple parts (ie: pt1, pt 2, pt 3 etc.)
+[Reuse functionality - we don't have to reprogram them, or copy + paste them each time]
+
 
 March, 2015
 */
@@ -14,8 +16,7 @@ March, 2015
   #include <string.h>
   #include <stdio.h>
   #include <stdlib.h>
-  #include "locations.h"
-  #define MAX_BUFFER_SIZE 4096
+  #include "constants.h"
 
   //Shared function def's
   void getOSName(FILE* file, char* osname);

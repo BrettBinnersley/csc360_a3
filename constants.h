@@ -2,14 +2,17 @@
 Brett Binnersley, V00776751
 Csc 360, Assignment #3
 
-Locations - defines values from the FAT-12 documentation about a filesystem.
-This file is used in every program for this assignment.
+constants - defines <MOST> of the values from the FAT-12 documentation about a filesystem.
+see "http://webhome.csc.uvic.ca/~wkui/Courses/CSC360/FAT12Description.pdf" for reference
 
 March, 2015
 */
 
 #ifndef HAS_INCLUDED_LOCATIONS_HEADER
 #define HAS_INCLUDED_LOCATIONS_HEADER
+
+  //Buffer size for strings (so they are all treated the exact same way)
+  #define MAX_BUFFER_SIZE 4096
 
 
   //Sector information

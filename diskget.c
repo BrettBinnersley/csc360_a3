@@ -1,7 +1,7 @@
 /*
 Brett Binnersley, V00776751
 Csc 360, Assignment #3
-Part 1
+Part 3
 
 March, 2015
 */

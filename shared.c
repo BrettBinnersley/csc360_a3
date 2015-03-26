@@ -3,6 +3,7 @@ Brett Binnersley, V00776751
 Csc 360, Assignment #3
 
 Functions that are shared between multiple parts (ie: pt1, pt 2, pt 3 etc.)
+[Reuse functionality - we don't have to reprogram them, or copy + paste them each time]
 
 March, 2015
 */
@@ -124,6 +125,6 @@ int getNumSectorsPerFat(FILE* file)
 }
 
 
+
+
 //EOF
-
-

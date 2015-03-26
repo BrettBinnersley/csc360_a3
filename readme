@@ -1,0 +1,14 @@
+-------------------------------------------
+Brett Binnersley, V00776751
+Csc 360, Assignment #3
+March, 2015
+-------------------------------------------
+
+
+To make: make
+To run (4 programs)
+
+./diskinfo <INPUT>
+./disklist <INPUT>
+./diskget <INPUT>
+./diskput <INPUT>
