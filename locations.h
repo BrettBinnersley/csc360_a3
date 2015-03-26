@@ -52,6 +52,7 @@ March, 2015
   #define DIR_VOLUME_LABEL 0x08
   #define DIR_SUBDIRECTORY 0x10
   #define DIR_ARCHIVE 0x20
+  #define DIR_LONG_FILENAME 0x0F
   #define DIR_EMPTY 0xE5
   #define DIR_FREE 0x00
   #define DIR_OFFSET_SIZE 32
