@@ -125,6 +125,66 @@ int getNumSectorsPerFat(FILE* file)
   return numSects;
 }
 
+//Get size of file
+int getSizeFile(FILE* file, int location)
+{
+  fseek(file, location, SEEK_SET);
+  int byte1 = 0;
+  int byte2 = 0;
+  int byte3 = 0;
+  int byte4 = 0;
+  fread(&byte1, 1, 1, file);
+  fread(&byte2, 1, 1, file);
+  fread(&byte3, 1, 1, file);
+  fread(&byte4, 1, 1, file);
+  int size = (byte1 << 0) + (byte2 << 8) + (byte3 << 16) + (byte4 << 24);
+  return size;
+}
+
+int getSectorPos(int firstLogClus)
+{
+  return (firstLogClus + SECTOR_DATA_BEGIN - SECTOR_RESERVED_SIZE) * SECTOR_SIZE;
+}
+
+int getNextLogClusFromFAT(FILE* file, int logicalCluster)
+{
+  int pos = 0;
+  int tmp1 = 0;
+  int tmp2 = 0;
+  // printf("%d\n", logicalCluster);
+  if(logicalCluster % 2 == 0)
+  {
+    int pos = FAT_FIRST_POS + ((3 * logicalCluster) / 2);
+    // printf("POS(E): %d\n", pos);
+
+    fseek(file, pos, SEEK_SET);
+    fread(&tmp1, 1, 1, file);
+    fread(&tmp2, 1 ,1, file);
+
+    tmp2 = tmp2 & 0x0F; //Get the low 4 bits
+    int result = (tmp2 << 8) + tmp1;
+    return result;
+  }
+  else
+  {
+    int pos = FAT_FIRST_POS + ((3 * logicalCluster) / 2);
+    // printf("POS(O): %d\n", pos);
+
+    fseek(file, pos, SEEK_SET);
+    fread(&tmp1, 1, 1, file);
+    fread(&tmp2, 1 ,1, file);
+
+    tmp1 = tmp1 & 0xF0; //Get the high 4 bits
+    int result = (tmp1 >> 4) + (tmp2 << 4);
+    return result;
+  }
+}
+
+int min(int x, int y)
+{
+  return (x < y) ? x : y;
+}
+
 char* trimWhitespace(char* string)
 {
   char* endChar;
@@ -152,6 +212,25 @@ char* trimWhitespace(char* string)
   *(endChar + 1) = 0;
 
   return string;
+}
+
+//Note: the returned string needs to be freed
+char* covertToUpper(char* string)
+{
+    char* newString;
+    char* pos;
+    newString = strdup(string);
+    pos = newString;
+
+    //Loop over all chars, converting to uppercase. Note: will terminate at null terminator
+    while(*pos)
+    {
+      *pos = toupper( *pos );
+      pos ++;
+    }
+
+    //Return the new string
+    return newString;
 }
 
 

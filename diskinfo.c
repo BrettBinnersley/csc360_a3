@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
   if(argc < 2)
   {
-    printf("Incorrect argument count\n");
+    printf("To run: diskinfo <FILE>\n");
     return 0;
   }
   char* fileName = argv[1];

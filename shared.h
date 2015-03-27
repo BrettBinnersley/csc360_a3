@@ -26,7 +26,14 @@ March, 2015
   int getNumFilesInRoot(FILE* file);
   int getNumFatCopies(FILE* file);
   int getNumSectorsPerFat(FILE* file);
-  char* trimWhitespace(char* string); //Note: still must free original string (else memory leak!)
+  int getSizeFile(FILE* file, int location); //Read in little endian, return int in big endian
+  int getSectorPos(int firstLogClus);
+  int getNextLogClusFromFAT(FILE* file, int logicalCluster);
+  int min(int num1, int num2);
+
+  //String functions
+  char* trimWhitespace(char* string);
+  char* covertToUpper(char* string); //Note: the returned string needs to be freed
 
 
 //End include guard

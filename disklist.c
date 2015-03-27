@@ -7,14 +7,13 @@ March, 2015
 */
 
 #include "shared.h"
-
 void ListFilesInRoot(); //Forward Decl so that we can program main first (cleaner code)
 
 int main(int argc, char *argv[])
 {
   if(argc < 2)
   {
-    printf("Incorrect argument count\n");
+    printf("disklist <FILE>\n");
     return 0;
   }
   char* fileName = argv[1];
@@ -58,17 +57,9 @@ void ListFilesInRoot(FILE* file)
         {
           type = 'D';
         }
+
         //Read in 4 bytes (little endian - turn it into a big endian int)
-        fseek(file, cur + DIR_FILE_SIZE_POS, SEEK_SET);
-        int byte1 = 0;
-        int byte2 = 0;
-        int byte3 = 0;
-        int byte4 = 0;
-        fread(&byte1, 1, 1, file);
-        fread(&byte2, 1, 1, file);
-        fread(&byte3, 1, 1, file);
-        fread(&byte4, 1, 1, file);
-        int size = (byte1 << 0) + (byte2 << 8) + (byte3 << 16) + (byte4 << 24);
+        int size = getSizeFile(file, cur + DIR_FILE_SIZE_POS);
 
         //Read in the filename
         fseek(file, cur + DIR_FILENAME_POS, SEEK_SET);
@@ -84,8 +75,8 @@ void ListFilesInRoot(FILE* file)
 
         //Read in creation date (little endian - turn it into a big endian int)
         fseek(file, cur + DIR_CREATION_DATE_POS, SEEK_SET);
-        byte1 = 0;
-        byte2 = 0;
+        int byte1 = 0;
+        int byte2 = 0;
         fread(&byte1, 1, 1, file);
         fread(&byte2, 1, 1, file);
         int createDate = (byte1 << 0) + (byte2 << 8);
@@ -103,6 +94,7 @@ void ListFilesInRoot(FILE* file)
         printf("%c %10d %20s.%3s %10d %10d\n", type, size, trimFName, extension, createDate, createTime);
 
         //Clean up memory
+        free(extension);
         free(filename);
 
       }

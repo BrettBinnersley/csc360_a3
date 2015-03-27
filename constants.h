@@ -23,6 +23,7 @@ March, 2015
   #define SECTOR_ROOT_FIRST 19
   #define SECTOR_ROOT_LAST 32
   #define SECTOR_DATA_BEGIN 33
+  #define SECTOR_RESERVED_SIZE 2
 
 
   //Boot sector information
@@ -71,6 +72,8 @@ March, 2015
   #define DIR_CREATION_TIME_SIZE 2
   #define DIR_CREATION_DATE_POS 16
   #define DIR_CREATION_DATE_SIZE 2
+  #define DIR_FIRST_LOG_CLUS_POS 26
+  #define DIR_FIRST_LOG_CLUS_SIZE 2
   #define DIR_FILE_SIZE_POS 28
   #define DIR_FILE_SIZE_SIZE 4
 
