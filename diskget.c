@@ -119,7 +119,7 @@ void ExtractFile(FILE* file, char* name, int clusterLoc)
   fread(&byte2, 1, 1, file);
   int logicalCluster = (byte1 << 0) + (byte2 << 8);
   int size = 0;
-  while(logicalCluster != FAT_LAST_CLUSTER_END)
+  while(logicalCluster > FAT_LAST_CLUSTER_START)
   {
     int sectorPos = getSectorPos(logicalCluster);
     int readSize = min(fileSize - size, SECTOR_SIZE);

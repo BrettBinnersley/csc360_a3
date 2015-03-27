@@ -46,7 +46,6 @@ int getFreeSectorCnt(FILE* file, int numSectors)
   int base = FAT_FIRST_POS;
   int tmp1 = 0; //byte 1
   int tmp2 = 0; //byte 2
-  int tmpByte = 0;
   int result = FAT_UNUSED;
   for (n = 2; n <= (numSectors-1-33+2); n++)
   {
@@ -55,15 +54,16 @@ int getFreeSectorCnt(FILE* file, int numSectors)
       fseek(file, base + 3*n/2, SEEK_SET);
       fread(&tmp1, 1, 1, file);
       fread(&tmp2, 1 ,1, file);
-      tmpByte = tmp2 & 0x0F; //Get the low 4 bits
-      result = (tmpByte << 8) + tmp1;
+      tmp2 = tmp2 & 0x0F; //Get the low 4 bits
+      result = (tmp2 << 8) + tmp1;
     }
     else
     {
-      //Seek (from current position) the next byte.
+      fseek(file, base + 3*n/2, SEEK_SET);
       fread(&tmp1, 1, 1, file);
-      tmpByte = tmp2 & 0xF0; //high 4 bits
-      result = (tmpByte >> 4) + (tmp1 << 4);
+      fread(&tmp2, 1 ,1, file);
+      tmp1 = tmp1 & 0xF0; //high 4 bits
+      result = (tmp1 >> 4) + (tmp2 << 4);
     }
 
     if (result == FAT_UNUSED)
@@ -185,6 +185,32 @@ int min(int x, int y)
   return (x < y) ? x : y;
 }
 
+unsigned int convertShort(unsigned int bigEnd)
+{
+  unsigned int res = 0;
+  res = (bigEnd >> 8 ) | (bigEnd << 8);
+  return res;
+}
+
+unsigned int convertInt(unsigned int bigEnd)
+{
+  unsigned int res = 0;
+  res = ((bigEnd >> 24) & 0x000000ff) | // move byte 3 to byte 0
+        ((bigEnd << 8)  & 0x00ff0000) | // move byte 1 to byte 2
+        ((bigEnd >> 8)  & 0x0000ff00) | // move byte 2 to byte 1
+        ((bigEnd << 24) & 0xff000000); // byte 0 to byte 3
+  return res;
+}
+
+
+int getFileSize(FILE* f)
+{
+  fseek(f, 0L, SEEK_END);
+  int size = ftell(f);
+  fseek(f, 0L, SEEK_SET);
+  return size;
+}
+
 char* trimWhitespace(char* string)
 {
   char* endChar;
@@ -233,5 +259,78 @@ char* covertToUpper(char* string)
     return newString;
 }
 
+
+//Return the next logical cluster as an integer (offset, 0 being the first [and so on])
+//Fat are duplicated
+//Each entry has 12 bits in FAT table.
+//Note: One has to exist (else undefined behavior). Ensure that one exists (check) before calling this function.
+int GetFreeFAT(FILE* file, int notFAT)
+{
+  int n = FAT_RESERVED_CNT;
+  int base = FAT_FIRST_POS;
+  int tmp1 = 0; //byte 1
+  int tmp2 = 0; //byte 2
+  int result = FAT_UNUSED;
+
+  while(1)
+  {
+    if (n % 2 == 0)
+    {
+      fseek(file, base + 3*n/2, SEEK_SET);
+      fread(&tmp1, 1, 1, file);
+      fread(&tmp2, 1 ,1, file);
+      tmp2 = tmp2 & 0x0F; //Get the low 4 bits
+      result = (tmp2 << 8) + tmp1;
+    }
+    else
+    {
+      fseek(file, base + 3*n/2, SEEK_SET);
+      fread(&tmp1, 1, 1, file);
+      fread(&tmp2, 1 ,1, file);
+      tmp1 = tmp1 & 0xF0; //high 4 bits
+      result = (tmp1 >> 4) + (tmp2 << 4);
+    }
+
+    if (result == FAT_UNUSED)
+    {
+      if(n != notFAT)
+      {
+        return n;
+      }
+    }
+    ++n;
+  }
+}
+
+//Extract label name IF** none exists
+char* extractLabelName(FILE* file)
+{
+  int base = (SECTOR_ROOT_FIRST * SECTOR_SIZE);
+  int cur = base;
+  fseek(file, base, SEEK_SET);
+  int dirStatus = 0;
+  fread(&dirStatus, 1, 1, file);
+  while(dirStatus != DIR_FREE)
+  {
+    if (dirStatus != DIR_EMPTY)
+    {
+      int attributes;
+      fseek(file, cur + DIR_ATTRIBUTES_POS, SEEK_SET);
+      fread(&attributes, 1, DIR_ATTRIBUTES_SIZE, file);
+      if((attributes != DIR_LONG_FILENAME) && (attributes & DIR_VOLUME_LABEL))
+      {
+        fseek(file, cur + DIR_FILENAME_POS, SEEK_SET);
+        char* filename = malloc(MAX_BUFFER_SIZE);
+        memset(filename, '\0', MAX_BUFFER_SIZE);
+        fread(filename, 1, DIR_FILENAME_SIZE, file);
+        return filename;
+      }
+    }
+    cur = cur + DIR_OFFSET_SIZE;
+    fseek(file, cur, SEEK_SET);
+    fread(&dirStatus, 1, 1, file);
+  }
+  return "";
+}
 
 //EOF

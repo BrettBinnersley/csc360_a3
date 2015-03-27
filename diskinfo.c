@@ -32,6 +32,11 @@ int main(int argc, char *argv[])
   char* diskLabel = malloc(MAX_BUFFER_SIZE);
   memset(diskLabel, '\0', MAX_BUFFER_SIZE);
   getDiskLabel(file, diskLabel);
+  if(strlen(trimWhitespace(diskLabel)) == 0)
+  {
+    free(diskLabel);
+    diskLabel = extractLabelName(file);
+  }
 
   int numFat = getNumFatCopies(file);
   int sectorsPerFat = getNumSectorsPerFat(file);

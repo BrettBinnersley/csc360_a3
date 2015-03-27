@@ -30,10 +30,15 @@ March, 2015
   int getSectorPos(int firstLogClus);
   int getNextLogClusFromFAT(FILE* file, int logicalCluster);
   int min(int num1, int num2);
+  unsigned int convertShort(unsigned int bigEnd); //Functions for converting big to little endian (for I/O)
+  unsigned int convertInt(unsigned int bigEnd);
+  int getFileSize(FILE* file);
+  int GetFreeFAT(FILE* file, int notFAT); //Get a free FAT. undefined behavior if none exist (check beforehand)
 
   //String functions
   char* trimWhitespace(char* string);
   char* covertToUpper(char* string); //Note: the returned string needs to be freed
+  char* extractLabelName(FILE* file); //Extract volume label (name) from the image
 
 
 //End include guard
